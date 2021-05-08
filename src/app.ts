@@ -6,11 +6,9 @@ app.get('/', (req, res) => {
   res.send('The sedulous hyena ate the antelope!');
 });
 
-app.get('/qq', (req, res) => {
-  res.send('Jura né');
-});
-app.listen(port, err => {
-  if (err) {
+
+app.listen(port, (err : void) => {
+  if (err != null) {
     return console.log(err);
   }
   return console.log(`server is listening on ${port}`);

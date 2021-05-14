@@ -9,7 +9,10 @@ const port = 3000;
 app.get('/', (req, res) => {
     res.send('The sedulous hyena ate the antelope!');
 });
-app.listen(port, err => {
+app.post('/', (req, res) => {
+    res.send('Eita');
+});
+app.listen(port, (err) => {
     if (err != null) {
         return console.log(err);
     }

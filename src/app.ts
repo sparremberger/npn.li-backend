@@ -1,11 +1,14 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 const app = express();
 const port = 3000;
-app.get('/', (req, res) => {
+app.get('/', (req : Request, res : Response) => {
   res.send('The sedulous hyena ate the antelope!');
 });
 
+app.post('/', (req : Request, res : Response) => {
+  res.send('Eita');
+});
 
 app.listen(port, (err : void) => {
   if (err != null) {

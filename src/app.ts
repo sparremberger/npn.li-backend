@@ -3,12 +3,20 @@ import express, { Request, Response } from 'express';
 const app = express();
 const port = 3000;
 app.get('/', (req : Request, res : Response) => {
-  res.send('The sedulous hyena ate the antelope!');
+  res.send(`oloko`);
 });
 
-app.post('/', (req : Request, res : Response) => {
+app.get('/api', (req : Request, res : Response) => {
   res.send('Eita');
+  console.log(req.query)
 });
+
+app.get('/api/:oi', (req : Request, res : Response) => {
+    res.send('Eita');
+    console.log(req.params)
+    console.log(req.url);
+    console.log(req.body);
+  });
 
 app.listen(port, (err : void) => {
   if (err != null) {

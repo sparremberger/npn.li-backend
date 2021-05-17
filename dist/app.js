@@ -7,10 +7,17 @@ const express_1 = __importDefault(require("express"));
 const app = express_1.default();
 const port = 3000;
 app.get('/', (req, res) => {
-    res.send('The sedulous hyena ate the antelope!');
+    res.send(`oloko`);
 });
-app.post('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.send('Eita');
+    console.log(req.query);
+});
+app.get('/api/:oi', (req, res) => {
+    res.send('Eita');
+    console.log(req.params);
+    console.log(req.url);
+    console.log(req.body);
 });
 app.listen(port, (err) => {
     if (err != null) {

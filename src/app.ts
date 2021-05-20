@@ -26,6 +26,7 @@ app.get('/', (req : Request, res : Response) => {
 
 });
 
+
 app.get('/projetos', (req : Request, res : Response) => {
     console.log("Get /projetos");
     res.sendFile('./alanspa/projetos.html', { root: __dirname });

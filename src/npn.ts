@@ -7,11 +7,13 @@ const port = 3000;
 const siteDirectory : string = path.join(__dirname, '..', '..', 'npn.li', 'npn.li');
 const listaDeURLS: Array<URL> = [];
 
-
-
-
-// Serve para ler o req.body
+// Serve pra ler o req.body quando vem do form html
+app.use(express.urlencoded({ extended: false }))
+// Serve para ler o req.body quando parte de um json
 app.use(express.json());
+
+
+
 
 app.get('/', (req : Request, res : Response) => {
     console.log("Get /");
@@ -22,8 +24,17 @@ app.get('/', (req : Request, res : Response) => {
 
 });
 
-app.get("/api", (req: Request, res: Response) => {
+app.post("/api", (req: Request, res: Response) => {
+    const { username, email, password, confirmpassword } : any = req.body;
     res.send("Eita");
+    console.log(req.body.username);
+    console.log(req.body.email);
+    console.log(req.body.password);
+    console.log(req.body.confirmpassword);
+})
+
+app.get("/registro", (req: Request, res: Response) => {
+    res.sendFile(path.join(siteDirectory, 'cadastro.html'));
     console.log("Eita!");
 })
 

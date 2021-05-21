@@ -4,7 +4,7 @@ import UrlShortener from './myclasses/UrlShortener'
 const path = require("path");
 const app = express();
 const port = 3000;
-
+const siteDirectory : string = path.join(__dirname, '..', '..', 'npn.li', 'npn.li');
 const listaDeURLS: Array<URL> = [];
 
 
@@ -16,7 +16,8 @@ app.use(express.json());
 app.get('/', (req : Request, res : Response) => {
     console.log("Get /");
     console.log(__dirname); // C:\Users\Sparremberger\Desktop\GitHub\npn.li-backend\dist
-    res.sendFile(path.join(__dirname, '..', 'dist', 'npn.li', 'index.html')); // Vê bem na hora de upar o server
+    res.sendFile(path.join(siteDirectory, 'index.html')); // Vê bem na hora de upar o server
+    console.log(siteDirectory);
     //res.send("kek");
 
 });
@@ -48,7 +49,7 @@ app.post('/login',  (req: Request, res: Response) => {
 });
 
 
-app.use(express.static('dist/npn.li'));
+app.use(express.static(siteDirectory));
 
 
 app.listen(port, (err: void) => {

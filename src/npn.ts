@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { URL } from "url";
-import UrlShortener from "./myclasses/UrlShortener";
+import UrlShortener from "./controllers/UrlShortener";
 
 const mongoose = require("mongoose");
 const url = "mongodb://127.0.0.1:27017/users";

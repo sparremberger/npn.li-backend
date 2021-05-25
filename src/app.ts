@@ -3,23 +3,7 @@ const path = require("path");
 const app = express();
 const port = 3000;
 
-/*app.get("/", (req: Request, res: Response) => {
-    console.log("teste!!");
-    console.log(__dirname);
-});
 
-app.get("/api", (req: Request, res: Response) => {
-    res.send("Eita");
-    console.log(req.query);
-});
-
-app.get("/api/:oi", (req: Request, res: Response) => {
-    res.send("Eita");
-    console.log(req.params);
-    console.log(req.url);
-    console.log(req.body);
-});
-*/
 app.get('/', (req : Request, res : Response) => {
     console.log("Get /");
     res.sendFile('./alanspa/index.html', { root: __dirname });

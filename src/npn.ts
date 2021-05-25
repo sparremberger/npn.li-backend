@@ -1,14 +1,20 @@
 import express, { Request, Response } from "express";
+import { ucs2 } from "punycode";
 import { URL } from "url";
 import UrlShortener from "./controllers/UrlShortener";
+import UserController from "./controllers/UserController";
 
 const mongoose = require("mongoose");
 const url = "mongodb://127.0.0.1:27017/users";
-const User = require("./models/User");
+//const UserSchema = require("./models/UserSchema");
+const UserSchema = require("./models/UserSchema");
+/*import UserController from "./controllers/UserController";
+let uc = new UserController();
+console.log(uc.createNewUser());*/
 
 const path = require("path");
 const app = express();
-const port = 3000;
+const port = 3001;
 const siteDirectory: string = path.join(
     __dirname,
     "..",
@@ -21,12 +27,14 @@ const listaDeURLS: Array<URL> = [];
 // Serve pra ler o req.body quando vem do form html
 app.use(express.urlencoded({ extended: false }));
 // Serve para ler o req.body quando parte de um json
-app.use(express.json());
+//app.use(express.json());
 
 // Conecta com o mongodb usando a url lá de cima
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 // db vai ser usado para monitorar a conexão
 const db = mongoose.connection;
+
+const uc = new UserController();
 
 db.once("open", (_: any) => {
     console.log("Database connected:", url);
@@ -36,12 +44,29 @@ db.on("error", (err: any) => {
     console.error("connection error:", err);
 });
 
-app.get("/", (req: Request, res: Response) => {
+
+
+app.get("/", async (req: Request, res: Response) => {
     console.log("Get /");
-    console.log(__dirname); // C:\Users\Sparremberger\Desktop\GitHub\npn.li-backend\dist
+    console.log(__dirname); // C:\Users\Sparremberger\Desktop\GitHub\npn.li-backend\src
     res.sendFile(path.join(siteDirectory, "index.html")); // Vê bem na hora de upar o server
     console.log(siteDirectory);
+    //await uc.findUser();
     //res.send("kek");
+});
+
+app.get("/maluco", (req: Request, res: Response) => {
+    // FUNCIONA
+    /*UserSchema.findOne({ email: "a@a" }, function (err: any, result: any) {
+        if (err) {
+            res.send(err);
+        } else {
+            console.log(result);
+        }
+    });*/
+    uc.findUser('a@a');
+    res.sendFile(path.join(siteDirectory, "cadastro.html"));
+    console.log("Eita! terminou get maluco");
 });
 
 app.post("/api", (req: Request, res: Response) => {
@@ -56,7 +81,8 @@ app.post("/api", (req: Request, res: Response) => {
 app.post("/registro", (req: Request, res: Response) => {
     const { username, email, password, confirmpassword }: any = req.body;
     console.log(req.body);
-    if (password == confirmpassword) {
+    
+    /*if (password == confirmpassword) {
         const newUser = new User({
             username: username,
             email: email,
@@ -66,32 +92,13 @@ app.post("/registro", (req: Request, res: Response) => {
             if (error) console.error(error);
             console.log(document);
         });
-    }
+    }*/
     res.send("POSTed registro");
 });
 
 app.get("/registro", (req: Request, res: Response) => {
-    const usuarioEncontrado = User.find({ email: "a@a" }).lean();
-
-    // É inacreditável que um simples find precise de tudo isso de código. Deve haver um jeito melhor.
-    User.findOne({ email: "a@a" }, function (err: any, result: any) {
-        if (err) {
-            res.send(err);
-        } else {
-            console.log(result);
-        }
-    }).lean();
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
     console.log("Eita!");
-    /*const newUser = new User({
-        username: "Kek",
-        email: "baa@kk.com",
-        password: "654564",
-    });
-    newUser.save(function (error: any, document: any) {
-        if (error) console.error(error);
-        console.log(document);
-    });*/
 });
 
 app.post("/encurtar", (req: Request, res: Response) => {
@@ -115,3 +122,5 @@ app.listen(port, (err: void) => {
     }
     return console.log(`server is listening on ${port}`);
 });
+
+

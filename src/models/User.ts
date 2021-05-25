@@ -1,11 +1,14 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+class User {
+    username : string;
+    email : string;
+    password : string;
 
-const userSchema = new Schema({
-  username: String,
-  email: String,
-  password: String
-})
+    constructor(username : string, email : string, password : string) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
 
-module.exports = mongoose.model('Users', userSchema)
+    }
+}
 
+export default User;

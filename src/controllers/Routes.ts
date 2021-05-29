@@ -18,43 +18,42 @@ const siteDirectory: string = path.join(
     "npn.li",
 );
 
-
-
-
 const uc = new UserController();
 
-router.get('/ok.txt', async (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "public", "tests.txt"));
-});
 
 router.get("/", async (req: Request, res: Response) => {
     console.log("Get /");
     res.sendFile(path.join(siteDirectory, "index.html")); // Vê bem na hora de upar o server
-    
-    console.log(__dirname);
+    console.log("__dirname = " + __dirname);
+    uc.findUser("a@a", "a");
+
     //await uc.findUser();
     //res.send("kek");
 });
 
 router.get("/maluco", (req: Request, res: Response) => {
-    uc.findUser('a@a' );
+
+    uc.findUser('a@a', "a" );
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
     console.log("Eita! terminou get maluco");
 });
 
-router.post("/api", (req: Request, res: Response) => {
+// LEMBRAR DE FAZER AS ROTAS SEREM ASYNC
+router.post("/api", async (req: Request, res: Response) => {
     const { username, email, password, confirmpassword }: any = req.body;
     res.send("Eita");
-    console.log(req.body.username);
-    console.log(req.body.email);
-    console.log(req.body.password);
-    console.log(req.body.confirmpassword);
+    //console.log(req.body.username);
+    //console.log(req.body.email);
+    //console.log(req.body.password);
+    //console.log(req.body.confirmpassword);
+    uc.findUser(req.body.email, req.body.username);
 });
 
 router.post("/registro", (req: Request, res: Response) => {
     const { username, email, password, confirmpassword }: any = req.body;
     console.log(req.body);
-    
+    console.log(req.body.username);
+    console.log(req.body.email);
     /*if (password == confirmpassword) {
         const newUser = new User({
             username: username,

@@ -10,7 +10,7 @@ const userSchema = new Schema({
 // Da documentação do Mongoose:
 // The first argument is the singular name of the collection your model is for. 
 // Mongoose automatically looks for the plural, lowercased version of your model name. 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('User', userSchema)
 
 /*const mongoose = require('mongoose');
 const Schema = mongoose.Schema;

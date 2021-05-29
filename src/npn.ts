@@ -64,7 +64,7 @@ app.get("/maluco", (req: Request, res: Response) => {
             console.log(result);
         }
     });*/
-    uc.findUser('a@a');
+    uc.findUser('a@a' );
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
     console.log("Eita! terminou get maluco");
 });

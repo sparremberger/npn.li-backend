@@ -10,6 +10,7 @@ const UserSchema = require("./models/UserSchema");
 const app = express();
 const port = 3001;
 
+// Mudar string de acordo com a estrutura do sistema hospedeiro
 const siteDirectory: string = path.join(
     __dirname,
     "..",
@@ -23,10 +24,10 @@ const siteDirectory: string = path.join(
 // Serve pra ler o req.body quando vem do form html
 app.use(express.urlencoded({ extended: false }));
 
-// Serve para ler o req.body quando parte de um json
+// Serve para ler o req.body quando parte de um json, e mais coisas
 app.use(express.json());
 
-// Conecta com o mongodb usando a url lá de cima
+// Conecta com o mongodb usando a url lá de cima e seta algumas propriedades
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 // db vai ser usado para monitorar a conexão
 const db = mongoose.connection; 

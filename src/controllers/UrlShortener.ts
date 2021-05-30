@@ -1,5 +1,5 @@
 import isValidUrl from './UrlValidator';
-import URL from './URL';
+import URL from '../models/URL';
 
 // UrlShortener recebe uma string, valida com o UrlValidator e, caso válida, cria e retorna um novo objeto URL
 function UrlShortener(url : string) { 

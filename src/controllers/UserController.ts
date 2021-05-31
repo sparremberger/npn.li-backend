@@ -5,31 +5,33 @@ import User from "../models/User";
 const userModel = require("../models/UserSchema");
 
 class UserController {
-    createNewUser(): any {
-        return "kek2";
-    }
-
-    async AddNewUser(usernameS: string, emailS: string, passwordS: string) {
+    async AddNewUser(usernameS: string, emailS: string, passwordS: string) : Promise<string> {
         let usuarioExiste: boolean[] = await this.findUser(emailS, usernameS);
         if (usuarioExiste[0]) {
             // e-mail existe
             console.log("Email existe");
-
-            return new User('1', 'a', '11');
+            return "O endereço de e-mail inserido já existe";
         }
         else if (usuarioExiste[1]) {
             // username existe
             console.log("Usuário existe");
-            return new User('1', 'a', '11');
+            return "O nome de usuário selecionado já existe";
         }
         else {
             // nem e-mail nem usuario existem
             console.log("Usuário criado!");
             const newUser = await new userModel({ username : usernameS, email : emailS, password : passwordS })
+            newUser.links.push("kek");
             //await userModel.create({ username : usernameS, email : emailS, password : passwordS });
             newUser.save();
-            return new User(usernameS, emailS, passwordS);
+            return "Conta criada com sucesso!";
         }
+    }
+
+    async getUser(emailParam : string) : Promise<typeof userModel> {
+        await userModel.find({ email: emailParam }, function (err: any, result: any) {
+            return result;
+        });
     }
 
     // função assíncrona pois depende do tempo que a DB demora pra retornar

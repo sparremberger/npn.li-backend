@@ -5,50 +5,44 @@ import UserController from "./UserController";
 const app = express();
 
 const path = require("path");
-const siteDirectory: string = path.join(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "npn.li",
-    "npn.li",
-);
+const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "npn.li");
 
 const uc = new UserController();
 
-
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
     console.log("Get /");
     res.sendFile(path.join(siteDirectory, "index.html")); // Vê bem na hora de upar o server
     console.log("__dirname = " + __dirname);
-    await uc.AddNewUser("lepreshaun", "alanrspa@gmail.com", "brbrbr");
+
     //await uc.findUser("a@a", "a");
     //res.send("kek");
 });
 
-router.get("/maluco", (req: Request, res: Response) => {
-    uc.findUser('a@a', "a" );
-    res.sendFile(path.join(siteDirectory, "cadastro.html"));
+router.get("/maluco", async (req: Request, res: Response) => {
+    /*console.log(uc.getUser("asd@gmail.com").then((user) => {
+        console.log(user);
+    }));*/
+    
+    console.log(await uc.getUser("a@a"));
+    //res.send(uc.getUser("asd@gmail.com"))
+    
 });
 
 // LEMBRAR DE FAZER AS ROTAS SEREM ASYNC
-router.post("/registro", (req: Request, res: Response) => {
+router.post("/registro", async (req: Request, res: Response) => {
     const { username, email, password, confirmpassword }: any = req.body;
     console.log(req.body);
     console.log(req.body.username);
     console.log(req.body.email);
-    /*if (password == confirmpassword) {
-        const newUser = new User({
-            username: username,
-            email: email,
-            password: password,
-        });
-        newUser.save(function (error: any, document: any) {
-            if (error) console.error(error);
-            console.log(document);
-        });
-    }*/
-    res.send("POSTed registro");
+    let resposta : string;
+    if (password == confirmpassword) {
+        resposta = await uc.AddNewUser(req.body.username, req.body.email, req.body.password);
+    }
+    else {
+        resposta = "As senhas digitadas não estão iguais";
+    }
+    console.log(resposta);
+    res.send(resposta);
 });
 
 router.get("/registro", (req: Request, res: Response) => {
@@ -68,6 +62,5 @@ router.post("/login", (req: Request, res: Response) => {
     console.log(req.body);
     res.send("Log in deu");
 });
-
 
 export default router;

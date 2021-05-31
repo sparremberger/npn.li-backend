@@ -4,8 +4,13 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   email: String,
-  password: String
+  password: String,
+  links : [String]
 })
+
+/*userSchema.methods.getLinks = function() {
+  return this.links;
+}*/
 
 // Da documentação do Mongoose:
 // The first argument is the singular name of the collection your model is for. 

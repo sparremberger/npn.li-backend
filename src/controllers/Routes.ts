@@ -1,13 +1,17 @@
 import express, { Request, Response } from "express";
+
 const router = express.Router();
 
 import UserController from "./UserController";
+import LinkController from "./LinkController";
+import { link } from "fs";
 const app = express();
 
 const path = require("path");
 const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "npn.li");
 
 const uc = new UserController();
+const lc = new LinkController();
 
 // INÍCIO DAS ROTAS
 router.get("/", (req: Request, res: Response) => {
@@ -50,7 +54,11 @@ router.get("/registro", (req: Request, res: Response) => {
 
 router.post("/encurtar", (req: Request, res: Response) => {
     const { url }: any = req.body;
+    //if (!link.exists(url)) {
+        lc.addLink(url);
+    //}
     console.log(url);
+
     //const shortenedUrl: URL | any = UrlShortener(url);
     //console.log("shortenedUrl = " + shortenedUrl.id);
     res.send("POST ték foi");

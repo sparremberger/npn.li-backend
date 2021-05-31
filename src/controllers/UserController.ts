@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
 
-//const User = require("../models/User");
 
-const userModel = require("../models/UserSchema");
+const { User } = require("../models/UserSchema");
+//const { Link } = require("../models/UserSchema");
 
 class UserController {
     async AddNewUser(usernameS: string, emailS: string, passwordS: string) : Promise<string> {
@@ -20,7 +19,7 @@ class UserController {
         else {
             // nem e-mail nem usuario existem
             console.log("Usuário criado!");
-            const newUser = await new userModel({ username : usernameS, email : emailS, password : passwordS })
+            const newUser = await new User({ username : usernameS, email : emailS, password : passwordS })
             newUser.links.push("kek");
             //await userModel.create({ username : usernameS, email : emailS, password : passwordS });
             newUser.save();
@@ -28,19 +27,22 @@ class UserController {
         }
     }
 
-    async getUserByEmail(emailParam : string) : Promise<typeof userModel> {
-        const resulti = await userModel.find({ email: emailParam }, function (err: any, result: any) {});
+    // retorna um usuário pelo e-mail
+    async getUserByEmail(emailParam : string) : Promise<typeof User> {
+        const resulti = await User.find({ email: emailParam }, function (err: any, result: any) {});
+        console.log("nao por nada");
         return resulti
     }
 
     // função assíncrona pois depende do tempo que a DB demora pra retornar
+    // Verifica se um usuário já existe com o email ou username
     async findUser(emailParam: string, usernameParam: string): Promise<boolean[]> {
         // se response[0] e response[1] forem ambos falsos, nem email nem username foram encontrados
         let response: boolean[] = [];
         let emailFound: boolean = false;
         let usernameFound: boolean = false;
 
-        await userModel.find({ email: emailParam }, function (err: any, result: any) {
+        await User.find({ email: emailParam }, function (err: any, result: any) {
             // o erro nessa parte só acontece se não tiver acesso ao banco de dados ou der timeout
             if (err) {
                 // supostamente checar com if(err!=null) é mais seguro, mas preciso pesquisar sobre isso.,
@@ -60,7 +62,7 @@ class UserController {
             }
         });
 
-        await userModel.find({ username: usernameParam }, function (err: any, result: any) {
+        await User.find({ username: usernameParam }, function (err: any, result: any) {
             if (err) {
                 usernameFound = false;
                 console.log(`Erro ao tentar executar a função find do mongoose para o username ${usernameParam} - ` + err);

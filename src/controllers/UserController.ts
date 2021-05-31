@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../models/User";
+
 //const User = require("../models/User");
 
 const userModel = require("../models/UserSchema");
@@ -28,10 +28,9 @@ class UserController {
         }
     }
 
-    async getUser(emailParam : string) : Promise<typeof userModel> {
-        await userModel.find({ email: emailParam }, function (err: any, result: any) {
-            return result;
-        });
+    async getUserByEmail(emailParam : string) : Promise<typeof userModel> {
+        const resulti = await userModel.find({ email: emailParam }, function (err: any, result: any) {});
+        return resulti
     }
 
     // função assíncrona pois depende do tempo que a DB demora pra retornar

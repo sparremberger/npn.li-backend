@@ -5,6 +5,7 @@ const router = express.Router();
 import UserController from "./UserController";
 import LinkController from "./LinkController";
 import { link } from "fs";
+import { loadavg } from "os";
 const app = express();
 
 const path = require("path");
@@ -52,15 +53,15 @@ router.get("/registro", (req: Request, res: Response) => {
     //console.log("Eita!");
 });
 
-router.post("/encurtar", (req: Request, res: Response) => {
+router.post("/encurtar", async (req: Request, res: Response) => {
     const { url }: any = req.body;
-    //if (!link.exists(url)) {
-        lc.addLink(url);
-    //}
-    console.log(url);
-
-    //const shortenedUrl: URL | any = UrlShortener(url);
-    //console.log("shortenedUrl = " + shortenedUrl.id);
+    let doesUrlExist: boolean = await lc.checkIfUrlExists(url);
+    if (doesUrlExist == false) {
+        await lc.addLink(url);
+        console.log("link inserido");
+    } else {
+        console.log("link não inserido");
+    }
     res.send("POST ték foi");
 });
 
@@ -74,7 +75,7 @@ router.get("/:link([a-zA-Z0-9]{4})", async (req: Request, res: Response) => {
     const currentUser = await uc.getUserByEmail("alanrspa@gmail.com");
     let redirected: boolean = false;
 
-    // Confere no array se existe um link com o parametro inserido, 
+    // Confere no array se existe um link com o parametro inserido,
     for (let i = 0; i < currentUser[0].links.length; i++) {
         if (currentUser[0].links[i] == req.params.link) {
             redirected = true;

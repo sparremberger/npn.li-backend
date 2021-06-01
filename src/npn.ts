@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 //const mongoose = require("mongoose");
 const url = "mongodb://127.0.0.1:27017/users";
-const UserSchema = require("./models/UserSchema");
+const UserSchema = require("./models/Schema");
 
 const app = express();
 const port = 3001;
@@ -46,7 +46,6 @@ db.on("error", (err: any) => {
 app.use('/', router);
 
 app.use(express.static(siteDirectory));
-
 
 
 app.listen(port, (err: void) => {

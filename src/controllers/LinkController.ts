@@ -1,4 +1,5 @@
-const { Link } = require("../models/UserSchema");
+const { Link } = require("../models/Schema");
+
 
 class LinkController {
     async checkIfUrlExists(urlParam: string): Promise<boolean> {

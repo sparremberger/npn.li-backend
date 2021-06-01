@@ -4,8 +4,6 @@ const router = express.Router();
 
 import UserController from "./UserController";
 import LinkController from "./LinkController";
-import { link } from "fs";
-import { loadavg } from "os";
 const app = express();
 
 const path = require("path");
@@ -50,7 +48,10 @@ router.post("/registro", async (req: Request, res: Response) => {
 
 router.get("/registro", (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
-    //console.log("Eita!");
+});
+
+router.get("/login", (req: Request, res : Response) => {
+    res.sendFile(path.join(siteDirectory, "login.html"));
 });
 
 router.post("/encurtar", async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
+const { User } = require("../models/Schema");
+import bcrypt from "bcrypt";
 
-
-const { User } = require("../models/UserSchema");
-//const { Link } = require("../models/UserSchema");
+const SALT_ROUNDS = 10;
 
 class UserController {
     async AddNewUser(usernameS: string, emailS: string, passwordS: string) : Promise<string> {
@@ -18,8 +18,8 @@ class UserController {
         }
         else {
             // nem e-mail nem usuario existem
-            console.log("Usuário criado!");
-            const newUser = await new User({ username : usernameS, email : emailS, password : passwordS })
+            const hashedPassword = await bcrypt.hash(passwordS, SALT_ROUNDS); // aplica um hash na senha
+            const newUser = await new User({ username : usernameS, email : emailS, password : hashedPassword });
             newUser.links.push("kek");
             //await userModel.create({ username : usernameS, email : emailS, password : passwordS });
             newUser.save();

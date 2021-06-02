@@ -38,7 +38,7 @@ router.post("/registro", async (req: Request, res: Response) => {
     console.log(req.body.email);
     let resposta: string;
     if (password == confirmpassword) {
-        resposta = await uc.AddNewUser(req.body.username, req.body.email, req.body.password);
+        resposta = await uc.AddNewUser(username, email, password);
     } else {
         resposta = "As senhas digitadas não estão iguais";
     }
@@ -52,6 +52,13 @@ router.get("/registro", (req: Request, res: Response) => {
 
 router.get("/login", (req: Request, res : Response) => {
     res.sendFile(path.join(siteDirectory, "login.html"));
+});
+
+router.post("/login", (req: Request, res : Response) => {
+    const { email, password } : any = req.body;
+    uc.loginUser(email, password);
+    res.send("bó");
+    //res.sendFile(path.join(siteDirectory, "login.html"));
 });
 
 router.post("/encurtar", async (req: Request, res: Response) => {

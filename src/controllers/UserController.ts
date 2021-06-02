@@ -1,25 +1,42 @@
+/* Classe responsável por todas as operações envolvendo usuários. Buscar no banco de dados,
+ * cadastrar novo usuário, logar com conta já criada, obter lista de usuários, etc. */
+
 const { User } = require("../models/Schema");
 import bcrypt from "bcrypt";
+import { json } from "express";
 
-const SALT_ROUNDS = 10;
+const ROUNDS = 10;
 
 class UserController {
-    async AddNewUser(usernameS: string, emailS: string, passwordS: string) : Promise<string> {
+    async loginUser(email: string, password: string) {
+        // nessas horas eu lembro do JSON.parse e stringify
+        const user = await this.getUserByEmail(email);
+        if (user.length == 0) {
+            console.log(`Email não encontrado`);
+        } else {
+            const isValid: boolean = await bcrypt.compare(password, user[0].password);
+            if (isValid) {
+                console.log(`a senha está correta`);
+            } else {
+                console.log(`errou cpx`);
+            }
+        }
+    }
+
+    async AddNewUser(usernameS: string, emailS: string, passwordS: string): Promise<string> {
         let usuarioExiste: boolean[] = await this.findUser(emailS, usernameS);
         if (usuarioExiste[0]) {
             // e-mail existe
             console.log("Email existe");
             return "O endereço de e-mail inserido já existe";
-        }
-        else if (usuarioExiste[1]) {
+        } else if (usuarioExiste[1]) {
             // username existe
             console.log("Usuário existe");
             return "O nome de usuário selecionado já existe";
-        }
-        else {
+        } else {
             // nem e-mail nem usuario existem
-            const hashedPassword = await bcrypt.hash(passwordS, SALT_ROUNDS); // aplica um hash na senha
-            const newUser = await new User({ username : usernameS, email : emailS, password : hashedPassword });
+            const hashedPassword = await bcrypt.hash(passwordS, ROUNDS); // aplica um hash na senha
+            const newUser = await new User({ username: usernameS, email: emailS, password: hashedPassword });
             newUser.links.push("kek");
             //await userModel.create({ username : usernameS, email : emailS, password : passwordS });
             newUser.save();
@@ -28,10 +45,11 @@ class UserController {
     }
 
     // retorna um usuário pelo e-mail
-    async getUserByEmail(emailParam : string) : Promise<typeof User> {
-        const resulti = await User.find({ email: emailParam }, function (err: any, result: any) {});
-        console.log("nao por nada");
-        return resulti
+    async getUserByEmail(emailParam: string): Promise<typeof User> {
+        const result = await User.find({ email: emailParam }, function (err: any, result: any) {
+            // implementar try catch
+        });
+        return result;
     }
 
     // função assíncrona pois depende do tempo que a DB demora pra retornar

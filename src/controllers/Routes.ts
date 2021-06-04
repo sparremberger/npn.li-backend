@@ -50,12 +50,12 @@ router.get("/registro", (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
 });
 
-router.get("/login", (req: Request, res : Response) => {
+router.get("/login", (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "login.html"));
 });
 
-router.post("/login", (req: Request, res : Response) => {
-    const { email, password } : any = req.body;
+router.post("/login", (req: Request, res: Response) => {
+    const { email, password }: any = req.body;
     uc.loginUser(email, password);
     res.send("bó");
     //res.sendFile(path.join(siteDirectory, "login.html"));
@@ -80,21 +80,14 @@ router.post("/login", (req: Request, res: Response) => {
 
 // Estamos usando até regex agora!
 router.get("/:link([a-zA-Z0-9]{4})", async (req: Request, res: Response) => {
-    const currentUser = await uc.getUserByEmail("alanrspa@gmail.com");
-    let redirected: boolean = false;
-
-    // Confere no array se existe um link com o parametro inserido,
-    for (let i = 0; i < currentUser[0].links.length; i++) {
-        if (currentUser[0].links[i] == req.params.link) {
-            redirected = true;
-            res.redirect(`http://${currentUser[0].originalUrl[i]}`);
-        }
-    }
+    //const currentUser = await uc.getUserByEmail("alanrspa@gmail.com");
+    const destinationUrl : string = await lc.getLink(req.params.link);
+    res.redirect(destinationUrl);
 
     // Se não havia nenhum link, então ele não redirecionou ninguém... logo, 404.
-    if (!redirected) {
+    /*if (!redirected) {
         res.send("404");
-    }
+    }*/
 
     //console.log("Eita!");
 });

@@ -31,6 +31,8 @@ class LinkController {
          * esse método usa o uuid pra gerar uma string única e pega os 4 primeiros caracteres */
         const newLink = await new Link({ link: uuidv4().substring(0, 4), originalUrl: urlParam, email: "0" });
         newLink.save();
+
+        // Nota: isso também precisa ser refatorado urgentemente. A solução atual não vai demorar muito pra começar a gerar colisões. 
     }
 
     async getLink(link: string): Promise<string> {

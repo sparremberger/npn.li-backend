@@ -1,11 +1,9 @@
 import express, { Request, Response } from "express";
-
-const router = express.Router();
-
 import UserController from "./UserController";
 import LinkController from "./LinkController";
-const app = express();
 
+const app = express();
+const router = express.Router();
 const path = require("path");
 const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "npn.li");
 
@@ -16,10 +14,6 @@ const lc = new LinkController();
 router.get("/", (req: Request, res: Response) => {
     console.log("Get /");
     res.sendFile(path.join(siteDirectory, "index.html")); // Vê bem na hora de upar o server
-    console.log("__dirname = " + __dirname);
-
-    //await uc.findUser("a@a", "a");
-    //res.send("kek");
 });
 
 router.get("/maluco", async (req: Request, res: Response) => {
@@ -32,10 +26,14 @@ router.get("/maluco", async (req: Request, res: Response) => {
 
 // LEMBRAR DE FAZER AS ROTAS SEREM ASYNC
 router.post("/registro", async (req: Request, res: Response) => {
+    // Desestrutura o req.body. Bom dar uma estudada nisso.
     const { username, email, password, confirmpassword }: any = req.body;
+    
+    // Deletar, pois é debug.
     console.log(req.body);
     console.log(req.body.username);
     console.log(req.body.email);
+
     let resposta: string;
     if (password == confirmpassword) {
         resposta = await uc.AddNewUser(username, email, password);
@@ -47,10 +45,12 @@ router.post("/registro", async (req: Request, res: Response) => {
 });
 
 router.get("/registro", (req: Request, res: Response) => {
+    console.log("Get /registro");
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
 });
 
 router.get("/login", (req: Request, res: Response) => {
+    console.log("Get /login");
     res.sendFile(path.join(siteDirectory, "login.html"));
 });
 

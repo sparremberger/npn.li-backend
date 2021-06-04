@@ -2,3 +2,7 @@ node_modules/
 alanspa/
 dist/npn.li/
 .VSCodeCounter/
+yarn.lock
+tslint.json
+yarn-error.log
+.gitattributes

@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 const { Link } = require("../models/Schema");
 
 class LinkController {
+    
     // Verifica se a url já está no banco, e retorna true ou false.
     async checkIfUrlExists(urlParam: string): Promise<boolean> {
         let urlExists: boolean = false;

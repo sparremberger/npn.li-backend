@@ -2,7 +2,22 @@ import { v4 as uuidv4 } from "uuid";
 const { Link } = require("../models/Schema");
 
 class LinkController {
-    
+
+
+    async getExistingUrl(urlParam: string) : Promise<any> {
+        let resposta;
+        await Link.find({ originalUrl: urlParam }, function (err: any, result: any) {
+            if (err) {
+                console.log(`Deu erro ${err}`);
+                return null;
+            } else {
+                resposta = { link : result[0].link, originalUrl :  result[0].originalUrl };     
+            }            
+        });
+        //console.log(teste.originalUrl);
+        return resposta;
+    }
+
     // Verifica se a url já está no banco, e retorna true ou false.
     async checkIfUrlExists(urlParam: string): Promise<boolean> {
         let urlExists: boolean = false;
@@ -32,8 +47,9 @@ class LinkController {
          * esse método usa o uuid pra gerar uma string única e pega os 4 primeiros caracteres */
         const newLink = await new Link({ link: uuidv4().substring(0, 4), originalUrl: urlParam, email: "0" });
         newLink.save();
+        return newLink;
 
-        // Nota: isso também precisa ser refatorado urgentemente. A solução atual não vai demorar muito pra começar a gerar colisões. 
+        // Nota: isso também precisa ser refatorado urgentemente. A solução atual não vai demorar muito pra começar a gerar colisões.
     }
 
     async getLink(link: string): Promise<string> {

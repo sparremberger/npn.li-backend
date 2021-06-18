@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import UserController from "./UserController";
 import LinkController from "./LinkController";
+import { link } from "fs";
 
 const app = express();
 const router = express.Router();
@@ -65,12 +66,15 @@ router.post("/encurtar", async (req: Request, res: Response) => {
     const { url }: any = req.body;
     let doesUrlExist: boolean = await lc.checkIfUrlExists(url);
     if (doesUrlExist == false) {
-        await lc.addLink(url);
-        console.log("link inserido");
+        let returnedLink = await lc.addLink(url);
+        console.log(`Url inserida : ${returnedLink.originalUrl}  Link curto ${returnedLink.link}`);
+        res.send({ url : returnedLink.originalUrl, link : returnedLink.link })
     } else {
-        console.log("link não inserido");
+        let existingLink = await lc.getExistingUrl(url)
+        console.log("link não inserido, pois já existe " + existingLink.originalUrl);
+        res.send({ url : existingLink.originalUrl, link : existingLink.link });        
     }
-    res.send("POST ték foi");
+    
 });
 
 router.post("/login", (req: Request, res: Response) => {

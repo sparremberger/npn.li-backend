@@ -4,7 +4,7 @@ import path from "path";
 import mongoose from "mongoose";
 
 //const mongoose = require("mongoose");
-const url = "mongodb://127.0.0.1:27017/users";
+const url = "mongodb://127.0.0.1:27017/npn";
 const UserSchema = require("./models/Schema");
 
 const app = express();

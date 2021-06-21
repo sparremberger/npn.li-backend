@@ -3,12 +3,16 @@ import router from "./controllers/Routes";
 import path from "path";
 import mongoose from "mongoose";
 
+
 //const mongoose = require("mongoose");
 const url = "mongodb://127.0.0.1:27017/npn";
 const UserSchema = require("./models/Schema");
 
+
 const app = express();
 const port = 3001;
+
+
 
 // Mudar string de acordo com a estrutura do sistema hospedeiro
 const siteDirectory: string = path.join(

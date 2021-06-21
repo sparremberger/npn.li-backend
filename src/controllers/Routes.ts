@@ -1,3 +1,5 @@
+// Provavelmente tem muita lógica acontecendo nesse arquivo.
+
 import express, { Request, Response } from "express";
 import UserController from "./UserController";
 import LinkController from "./LinkController";
@@ -10,6 +12,7 @@ const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "
 
 const uc = new UserController();
 const lc = new LinkController();
+
 
 // INÍCIO DAS ROTAS
 router.get("/", (req: Request, res: Response) => {

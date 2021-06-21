@@ -4,8 +4,14 @@
 const { User } = require("../models/Schema");
 import bcrypt from "bcrypt";
 import { json } from "express";
+import UserAccount from "./UserAccount";
 
 const ROUNDS = 10;
+const userAccount = new UserAccount();
+
+
+// MEU DEUS DELETA ISSO
+let temporaryTokenTest = '';
 
 class UserController {
     async loginUser(email: string, password: string) {
@@ -17,6 +23,9 @@ class UserController {
             const isValid: boolean = await bcrypt.compare(password, user[0].password);
             if (isValid) {
                 console.log(`a senha está correta`);
+                temporaryTokenTest = userAccount.generateAccessToken(email);
+                console.log(`TTT = ${temporaryTokenTest}`);
+                userAccount.authenticateToken(temporaryTokenTest);
             } else {
                 console.log(`errou cpx`);
             }

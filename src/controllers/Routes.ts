@@ -13,10 +13,17 @@ const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "
 const uc = new UserController();
 const lc = new LinkController();
 
+let options = {
+    path:'/*',
+    domain:'localhost',
+    httpOnly: false,
+    maxAge: (1000 * 60 * 60 * 24)
+  };
 
 // INÍCIO DAS ROTAS
 router.get("/", (req: Request, res: Response) => {
     console.log("Get /");
+    res.setHeader('Set-Cookie', 'kek');
     res.sendFile(path.join(siteDirectory, "index.html")); // Vê bem na hora de upar o server
 });
 
@@ -55,6 +62,7 @@ router.get("/registro", (req: Request, res: Response) => {
 
 router.get("/login", (req: Request, res: Response) => {
     console.log("Get /login");
+    res.cookie('cookieName', 'cookieValue', options);
     res.sendFile(path.join(siteDirectory, "login.html"));
 });
 

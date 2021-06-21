@@ -3,7 +3,6 @@
 
 const { User } = require("../models/Schema");
 import bcrypt from "bcrypt";
-import { json } from "express";
 import UserAccount from "./UserAccount";
 
 const ROUNDS = 10;

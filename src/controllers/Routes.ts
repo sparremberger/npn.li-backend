@@ -16,14 +16,14 @@ const lc = new LinkController();
 let options = {
     path:'/*',
     domain:'localhost',
-    httpOnly: false,
-    maxAge: (1000 * 60 * 60 * 24)
+    httpOnly: true,
+    maxAge: (1000 * 60 * 60 * 24)*15
   };
 
 // INÍCIO DAS ROTAS
 router.get("/", (req: Request, res: Response) => {
     console.log("Get /");
-    res.setHeader('Set-Cookie', 'kek');
+    //res.setHeader('Set-Cookie', 'kek');
     res.sendFile(path.join(siteDirectory, "index.html")); // Vê bem na hora de upar o server
 });
 
@@ -62,14 +62,15 @@ router.get("/registro", (req: Request, res: Response) => {
 
 router.get("/login", (req: Request, res: Response) => {
     console.log("Get /login");
-    res.cookie('cookieName', 'cookieValue', options);
+    //res.cookie('cookieName', 'cookieValue', options);
     res.sendFile(path.join(siteDirectory, "login.html"));
 });
 
-router.post("/login", (req: Request, res: Response) => {
+router.post("/login", async (req: Request, res: Response) => {
     const { email, password }: any = req.body;
-    uc.loginUser(email, password);
-    res.send("bó");
+    let result : string = await uc.loginUser(email, password);
+    res.cookie('access_token', result, options ) // Seta o cookie para a session token
+    res.send(result);
     //res.sendFile(path.join(siteDirectory, "login.html"));
 });
 

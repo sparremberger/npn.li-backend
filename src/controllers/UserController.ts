@@ -10,14 +10,17 @@ const userAccount = new UserAccount();
 
 
 // MEU DEUS DELETA ISSO
-let temporaryTokenTest = '';
+
 
 class UserController {
-    async loginUser(email: string, password: string) {
+    async loginUser(email: string, password: string) : Promise<string> {
+        // 0 = email não encontrado, 1 = senha errada, token = login success
+        let temporaryTokenTest = '0';
         // nessas horas eu lembro do JSON.parse e stringify
         const user = await this.getUserByEmail(email);
         if (user.length == 0) {
             console.log(`Email não encontrado`);
+            return temporaryTokenTest;
         } else {
             const isValid: boolean = await bcrypt.compare(password, user[0].password);
             if (isValid) {
@@ -25,8 +28,11 @@ class UserController {
                 temporaryTokenTest = userAccount.generateAccessToken(email);
                 console.log(`TTT = ${temporaryTokenTest}`);
                 userAccount.authenticateToken(temporaryTokenTest);
+                return temporaryTokenTest;
             } else {
                 console.log(`errou cpx`);
+                temporaryTokenTest = '1';
+                return temporaryTokenTest;
             }
         }
     }

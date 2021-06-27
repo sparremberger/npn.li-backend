@@ -1,7 +1,7 @@
 /* Classe responsável por todas as operações envolvendo usuários. Buscar no banco de dados,
  * cadastrar novo usuário, logar com conta já criada, obter lista de usuários, etc. */
 
-const { User } = require("../models/Schema");
+const { User, Token } = require("../models/Schema");
 import bcrypt from "bcrypt";
 import UserAccount from "./UserAccount";
 
@@ -9,13 +9,11 @@ const ROUNDS = 10;
 const userAccount = new UserAccount();
 
 
-// MEU DEUS DELETA ISSO
-
 
 class UserController {
-    async loginUser(email: string, password: string) : Promise<string> {
+    async loginUser(email: string, password: string): Promise<string> {
         // 0 = email não encontrado, 1 = senha errada, token = login success
-        let temporaryTokenTest = '0';
+        let temporaryTokenTest = "0";
         // nessas horas eu lembro do JSON.parse e stringify
         const user = await this.getUserByEmail(email);
         if (user.length == 0) {
@@ -27,14 +25,53 @@ class UserController {
                 console.log(`a senha está correta`);
                 temporaryTokenTest = userAccount.generateAccessToken(email);
                 console.log(`TTT = ${temporaryTokenTest}`);
-                userAccount.authenticateToken(temporaryTokenTest);
+                userAccount.authenticateToken(temporaryTokenTest); // só pra testar
+                this.addTokenToDb(email, temporaryTokenTest);
                 return temporaryTokenTest;
             } else {
                 console.log(`errou cpx`);
-                temporaryTokenTest = '1';
+                temporaryTokenTest = "1";
                 return temporaryTokenTest;
             }
         }
+    }
+
+    async addTokenToDb(emailS: string, tokenS: string) {
+        this.deletePreviousToken(emailS);
+        const newToken = await new Token({ email: emailS, token: tokenS });
+        //newToken.tokens.push("kek");
+        //await userModel.create({ username : usernameS, email : emailS, password : passwordS });
+        newToken.save();
+    }
+
+    async deletePreviousToken(emailS : string) {
+        await Token.deleteOne({ email: emailS }, function (err: any, result: any) {
+            // implementar try catch?
+        });
+    }
+
+    // Verifica se a token do usuário existe no DB
+    async AuthenticateUserByToken(userToken: string) {
+        const kek = await this.getUserByToken(userToken);
+        console.log(kek);
+        //await
+    }
+
+    checkForToken() {}
+
+    async getUserByToken(tokenParam: string): Promise<typeof Token> {
+        const result = await Token.find({ token: tokenParam }, function (err: any, result: any) {
+            // kek?
+        });
+        return result;
+    }
+
+    // retorna um usuário pelo e-mail
+    async getUserByEmail(emailParam: string): Promise<typeof User> {
+        const result = await User.find({ email: emailParam }, function (err: any, result: any) {
+            // implementar try catch
+        });
+        return result;
     }
 
     async AddNewUser(usernameS: string, emailS: string, passwordS: string): Promise<string> {
@@ -56,14 +93,6 @@ class UserController {
             newUser.save();
             return "Conta criada com sucesso!";
         }
-    }
-
-    // retorna um usuário pelo e-mail
-    async getUserByEmail(emailParam: string): Promise<typeof User> {
-        const result = await User.find({ email: emailParam }, function (err: any, result: any) {
-            // implementar try catch
-        });
-        return result;
     }
 
     // função assíncrona pois depende do tempo que a DB demora pra retornar

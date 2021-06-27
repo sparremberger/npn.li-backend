@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import router from "./controllers/Routes";
 import path from "path";
 import mongoose from "mongoose";
+import cookieParser from 'cookie-parser';
 
 
 //const mongoose = require("mongoose");
@@ -29,6 +30,9 @@ app.use(express.urlencoded({ extended: false }));
 
 // Serve para ler o req.body quando parte de um json, e mais coisas
 app.use(express.json());
+
+// Cookie parser não vem por padrão no express :\
+//app.use(cookieParser());
 
 // Conecta com o mongodb usando a url lá de cima e seta algumas propriedades
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });

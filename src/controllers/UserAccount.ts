@@ -13,10 +13,10 @@ class UserAccount {
     authenticateToken(token : string) {
         jwt.verify(token, JSON.stringify(process.env.TOKEN_SECRET), (err : any, user : any) => {
             if (err) {
-                console.log(`Erro em autenticar ${err}`);
+                console.log(`UserAccount: Erro em autenticar token: ${err}`);
             }
             else { 
-                console.log(`Sem erro`);
+                console.log(`UserAccount: Sem erro de autenticação`);
             }
             
         });

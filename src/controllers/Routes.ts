@@ -4,20 +4,23 @@ import express, { Request, Response } from "express";
 import UserController from "./UserController";
 import LinkController from "./LinkController";
 import { link } from "fs";
+import { strict } from "assert/strict";
 
 const app = express();
 const router = express.Router();
 const path = require("path");
+
+
 const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "npn.li");
 
 const uc = new UserController();
 const lc = new LinkController();
 
 let options = {
-    path:'/*',
-    domain:'localhost',
-    httpOnly: true,
-    maxAge: (1000 * 60 * 60 * 24)*15
+    path:'/',
+    domain:'127.0.0.1',
+    httpOnly: false,
+    maxAge: (1000 * 60 * 60 * 24)*15,
   };
 
 // INÍCIO DAS ROTAS
@@ -60,10 +63,19 @@ router.get("/registro", (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
 });
 
-router.get("/login", (req: Request, res: Response) => {
+router.get("/login", async (req: Request, res: Response) => {
     console.log("Get /login");
     //res.cookie('cookieName', 'cookieValue', options);
+
+    //
+    const tokenFound = await uc.AuthenticateUserByToken('token');
+    let cook =  req.headers.cookie;
+    console.log(cook?.split('=')[1]);
+    //
+
+
     res.sendFile(path.join(siteDirectory, "login.html"));
+
 });
 
 router.post("/login", async (req: Request, res: Response) => {

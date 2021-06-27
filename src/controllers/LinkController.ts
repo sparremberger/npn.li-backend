@@ -2,17 +2,15 @@ import { v4 as uuidv4 } from "uuid";
 const { Link } = require("../models/Schema");
 
 class LinkController {
-
-
-    async getExistingUrl(urlParam: string) : Promise<any> {
+    async getExistingUrl(urlParam: string): Promise<any> {
         let resposta;
         await Link.find({ originalUrl: urlParam }, function (err: any, result: any) {
             if (err) {
                 console.log(`Deu erro ${err}`);
                 return null;
             } else {
-                resposta = { link : result[0].link, originalUrl :  result[0].originalUrl };     
-            }            
+                resposta = { link: result[0].link, originalUrl: result[0].originalUrl };
+            }
         });
         //console.log(teste.originalUrl);
         return resposta;
@@ -52,7 +50,16 @@ class LinkController {
         // Nota: isso também precisa ser refatorado urgentemente. A solução atual não vai demorar muito pra começar a gerar colisões.
     }
 
-    async getLink(link: string): Promise<string> {
+    async clickLink(link: string, click : boolean): Promise<string> {
+        let destinationUrl = await this.getLink(link, click);
+        if (destinationUrl != "404") {
+            return destinationUrl;
+        } else {
+            return destinationUrl;
+        }
+    }
+
+    async getLink(link: string, click : boolean): Promise<string> {
         // CORRIGIR IMPLEMENTAÇÃO PRA TRY/CATCH COM THROW O MAIS RÁPIDO POSSÍVEL
         // https://stackoverflow.com/questions/56417623/how-to-catch-an-error-when-using-mongoose-to-query-something
 
@@ -66,11 +73,28 @@ class LinkController {
                 linkFound = false;
                 destinationUrl = "404";
             } else {
-                if (result.length > 0) {
-                    console.log("aeee");
+                if (result.length > 0 && click == true) {
+                    console.log("getLink(): link encontrado");
                     linkFound = true;
                     destinationUrl = result[0].originalUrl;
-                } else {
+                    result[0].clicks++;
+                    console.log(result[0].id);
+                    Link.findByIdAndUpdate(result[0].id, {$inc: {clicks:1}}, function (err : any, data : any) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            console.log(data);
+                        }
+                    });
+
+                } 
+                else if (result.length > 0) {
+                    console.log("getLink(): link encontrado");
+                    linkFound = true;
+                    destinationUrl = result[0].originalUrl;
+                }
+                else {
                     destinationUrl = "404";
                     linkFound = false;
                 }

@@ -5,11 +5,11 @@ import UserController from "./UserController";
 import LinkController from "./LinkController";
 import { link } from "fs";
 import { strict } from "assert/strict";
+import { loadavg } from "os";
 
 const app = express();
 const router = express.Router();
 const path = require("path");
-
 
 const siteDirectory: string = path.join(__dirname, "..", "..", "..", "npn.li", "npn.li");
 
@@ -17,11 +17,12 @@ const uc = new UserController();
 const lc = new LinkController();
 
 let options = {
-    path:'/',
-    domain:'127.0.0.1',
+    path: "/",
+    domain: "127.0.0.1",
     httpOnly: false,
-    maxAge: (1000 * 60 * 60 * 24)*15,
-  };
+    maxAge: 1000 * 60 * 60 * 24 * 15,
+    sameSite: "strict",
+};
 
 // INÍCIO DAS ROTAS
 router.get("/", (req: Request, res: Response) => {
@@ -42,7 +43,7 @@ router.get("/maluco", async (req: Request, res: Response) => {
 router.post("/registro", async (req: Request, res: Response) => {
     // Desestrutura o req.body. Bom dar uma estudada nisso.
     const { username, email, password, confirmpassword }: any = req.body;
-    
+
     // Deletar, pois é debug.
     console.log(req.body);
     console.log(req.body.username);
@@ -63,25 +64,37 @@ router.get("/registro", (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
 });
 
+router.get("/userlinks", async (req: Request, res: Response) => {
+    const userFound = await uc.AuthenticateUserByToken(req.headers.cookie);
+    if (userFound.length > 0) {
+        console.log(userFound);
+        console.log(userFound[0].links);
+        let linkArray = [];
+        for (let i = 0; i < userFound[0].links.length; i++) {
+            //            await linkArray.push(lc.getLink(userFound[0].links[i]));
+            let estringue = await lc.getLink(userFound[0].links[i]);
+            linkArray.push({ link : userFound[0].links[i], url : estringue });
+            console.log(`Link: ${userFound[0].links[i]} Url: ${linkArray[i]}`);
+            
+        }
+        console.log(linkArray)
+        res.json(linkArray);
+    } else {
+        res.send("404");
+    }
+});
+
+router.get("/destinations", async (req: Request, res: Response) => {});
+
 router.get("/login", async (req: Request, res: Response) => {
     console.log("Get /login");
-    //res.cookie('cookieName', 'cookieValue', options);
-
-    //
-    const tokenFound = await uc.AuthenticateUserByToken('token');
-    let cook =  req.headers.cookie;
-    console.log(cook?.split('=')[1]);
-    //
-
-
     res.sendFile(path.join(siteDirectory, "login.html"));
-
 });
 
 router.post("/login", async (req: Request, res: Response) => {
     const { email, password }: any = req.body;
-    let result : string = await uc.loginUser(email, password);
-    res.cookie('access_token', result, options ) // Seta o cookie para a session token
+    let result: string = await uc.loginUser(email, password);
+    res.cookie("access_token", result, options); // Seta o cookie para a session token
     res.send(result);
     //res.sendFile(path.join(siteDirectory, "login.html"));
 });
@@ -92,13 +105,12 @@ router.post("/encurtar", async (req: Request, res: Response) => {
     if (doesUrlExist == false) {
         let returnedLink = await lc.addLink(url);
         console.log(`Url inserida : ${returnedLink.originalUrl}  Link curto ${returnedLink.link}`);
-        res.send({ url : returnedLink.originalUrl, link : returnedLink.link })
+        res.send({ url: returnedLink.originalUrl, link: returnedLink.link });
     } else {
-        let existingLink = await lc.getExistingUrl(url)
+        let existingLink = await lc.getExistingUrl(url);
         console.log("link não inserido, pois já existe " + existingLink.originalUrl);
-        res.send({ url : existingLink.originalUrl, link : existingLink.link });        
+        res.send({ url: existingLink.originalUrl, link: existingLink.link });
     }
-    
 });
 
 router.post("/login", (req: Request, res: Response) => {
@@ -109,8 +121,13 @@ router.post("/login", (req: Request, res: Response) => {
 // Estamos usando até regex agora!
 router.get("/:link([a-zA-Z0-9]{4})", async (req: Request, res: Response) => {
     //const currentUser = await uc.getUserByEmail("alanrspa@gmail.com");
-    const destinationUrl : string = await lc.getLink(req.params.link);
+    const destinationUrl: string = await lc.clickLink(req.params.link, true);
+    if (destinationUrl != '404') {
     res.redirect(destinationUrl);
+    }
+    else {
+        res.send('404');
+    }
 
     // Se não havia nenhum link, então ele não redirecionou ninguém... logo, 404.
     /*if (!redirected) {

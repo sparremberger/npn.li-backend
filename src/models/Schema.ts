@@ -5,14 +5,13 @@ const userSchema = new Schema({
   username: String,
   email: String,
   password: String,
-  links : [String],
-  originalUrl : [String]
+  links : [String]
 })
 
 const linkSchema = new Schema({
   link : String,
   originalUrl : String,
-  email : String
+  clicks : Number
 })
 
 const tokenSchema = new Schema({

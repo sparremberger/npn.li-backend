@@ -35,7 +35,7 @@ app.use(express.json());
 //app.use(cookieParser());
 
 // Conecta com o mongodb usando a url lá de cima e seta algumas propriedades
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
 // db vai ser usado para monitorar a conexão
 const db = mongoose.connection;
 

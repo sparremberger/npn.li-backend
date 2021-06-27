@@ -8,8 +8,6 @@ import UserAccount from "./UserAccount";
 const ROUNDS = 10;
 const userAccount = new UserAccount();
 
-
-
 class UserController {
     async loginUser(email: string, password: string): Promise<string> {
         // 0 = email não encontrado, 1 = senha errada, token = login success
@@ -44,25 +42,36 @@ class UserController {
         newToken.save();
     }
 
-    async deletePreviousToken(emailS : string) {
+    async deletePreviousToken(emailS: string) {
         await Token.deleteOne({ email: emailS }, function (err: any, result: any) {
             // implementar try catch?
         });
     }
 
     // Verifica se a token do usuário existe no DB
-    async AuthenticateUserByToken(userToken: string) {
-        const kek = await this.getUserByToken(userToken);
-        console.log(kek);
-        //await
+    async AuthenticateUserByToken(incomingCookie: string | undefined) : Promise<typeof User> {
+        if (incomingCookie != undefined) {
+            // Armazena o cookie
+            const cookie: string[] = incomingCookie.split("=");
+            // Pega o usuário que contém esse cookie. Esse usuário é um doc de tokens, não de users
+            const userToken = await this.getUserByToken(cookie[1]);
+
+            console.log(`c = ` + cookie[1]);
+            if (userToken.length > 0) {
+                console.log(`u = ` + userToken[0].token);
+                let user = await this.getUserByEmail(userToken[0].email)
+                //console.log(user);
+                return user;
+            }
+            else {
+                console.log('Nenhum usuario encontrado com esse token');
+                return [];
+            }
+        }
     }
 
-    checkForToken() {}
-
     async getUserByToken(tokenParam: string): Promise<typeof Token> {
-        const result = await Token.find({ token: tokenParam }, function (err: any, result: any) {
-            // kek?
-        });
+        const result = await Token.find({ token: tokenParam }, function (err: any, result: any) {});
         return result;
     }
 
@@ -88,7 +97,7 @@ class UserController {
             // nem e-mail nem usuario existem
             const hashedPassword = await bcrypt.hash(passwordS, ROUNDS); // aplica um hash na senha
             const newUser = await new User({ username: usernameS, email: emailS, password: hashedPassword });
-            newUser.links.push("kek");
+            newUser.links.push("1997");
             //await userModel.create({ username : usernameS, email : emailS, password : passwordS });
             newUser.save();
             return "Conta criada com sucesso!";

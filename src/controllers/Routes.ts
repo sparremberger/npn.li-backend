@@ -67,7 +67,7 @@ router.get("/registro", (req: Request, res: Response) => {
 router.get("/autenticar", async (req : Request, res : Response) => {
     const userFound = await uc.AuthenticateUserByToken(req.headers.cookie);
     if (userFound != undefined && userFound.length > 0) {
-        res.send("autenticado");
+        res.send(userFound[0].username);
     }
     else {
         res.send("nope");
@@ -83,7 +83,7 @@ router.get("/userlinks", async (req: Request, res: Response) => {
         for (let i = 0; i < userFound[0].links.length; i++) {
             let estringue = await lc.getLink(userFound[0].links[i], false);
             linkArray.push({ link: userFound[0].links[i], url: estringue });
-            console.log(`Link: ${userFound[0].links[i]} Url: ${linkArray[i]}`);
+            console.log(`Link: ${userFound[0].links[i]} Url: ${linkArray[i].url}`);
         }
         console.log(linkArray);
         res.json(linkArray);

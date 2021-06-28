@@ -50,7 +50,7 @@ class LinkController {
         // Nota: isso também precisa ser refatorado urgentemente. A solução atual não vai demorar muito pra começar a gerar colisões.
     }
 
-    async clickLink(link: string, click : boolean): Promise<string> {
+    async clickLink(link: string, click: boolean): Promise<string> {
         let destinationUrl = await this.getLink(link, click);
         if (destinationUrl != "404") {
             return destinationUrl;
@@ -59,48 +59,42 @@ class LinkController {
         }
     }
 
-    async getLink(link: string, click : boolean): Promise<string> {
+    async getLink(link: string, click: boolean): Promise<string> {
         // CORRIGIR IMPLEMENTAÇÃO PRA TRY/CATCH COM THROW O MAIS RÁPIDO POSSÍVEL
         // https://stackoverflow.com/questions/56417623/how-to-catch-an-error-when-using-mongoose-to-query-something
 
         /* Verifica no banco de dados se existe um link. Caso sim, retorna a url original para redirect,
          * caso contrário retorna "404" como string */
-        let linkFound: boolean = false;
+        let result;
         let destinationUrl: string = "";
-        await Link.find({ link: link }, function (err: any, result: any) {
+        result = await Link.find({ link: link }, function (err: any, result: any) {
             if (err) {
                 console.log(`${err}`);
-                linkFound = false;
                 destinationUrl = "404";
-            } else {
-                if (result.length > 0 && click == true) {
-                    console.log("getLink(): link encontrado");
-                    linkFound = true;
-                    destinationUrl = result[0].originalUrl;
-                    result[0].clicks++;
-                    console.log(result[0].id);
-                    Link.findByIdAndUpdate(result[0].id, {$inc: {clicks:1}}, function (err : any, data : any) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        else {
-                            console.log(data);
-                        }
-                    });
-
-                } 
-                else if (result.length > 0) {
-                    console.log("getLink(): link encontrado");
-                    linkFound = true;
-                    destinationUrl = result[0].originalUrl;
-                }
-                else {
-                    destinationUrl = "404";
-                    linkFound = false;
-                }
             }
         });
-        return destinationUrl;
+
+        if (result.length > 0 && click == true) {
+            console.log("getLink(): link encontrado");
+            destinationUrl = result[0].originalUrl;
+            result[0].clicks++;
+            console.log(result[0].id);
+            Link.findByIdAndUpdate(result[0].id, { $inc: { clicks: 1 } }, function (err: any, data: any) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(data);
+                }
+            });
+            return destinationUrl;
+        } else if (result.length > 0) {
+            console.log("getLink(): link encontrado");
+            destinationUrl = result[0].originalUrl;
+            return destinationUrl;
+        } else {
+            destinationUrl = "404";
+            return destinationUrl;
+        }
     }
 }
 

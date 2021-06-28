@@ -21,7 +21,7 @@ let options = {
     domain: "127.0.0.1",
     httpOnly: false,
     maxAge: 1000 * 60 * 60 * 24 * 15,
-    sameSite: "strict",
+    sameSite: false,
 };
 
 // INÍCIO DAS ROTAS
@@ -129,6 +129,7 @@ router.post("/encurtar", async (req: Request, res: Response) => {
     let doesUrlExist: boolean = await lc.checkIfUrlExists(url);
     if (doesUrlExist == false) {
         let returnedLink = await lc.addLink(url);
+        
         console.log(`Url inserida : ${returnedLink.originalUrl}  Link curto ${returnedLink.link}`);
         res.send({ url: returnedLink.originalUrl, link: returnedLink.link });
     } else {

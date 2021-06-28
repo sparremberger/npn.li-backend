@@ -4,20 +4,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const path = require("path");
+const Routes_1 = __importDefault(require("./controllers/Routes"));
+const path_1 = __importDefault(require("path"));
+const mongoose_1 = __importDefault(require("mongoose"));
+//const mongoose = require("mongoose");
+const url = "mongodb://127.0.0.1:27017/npn";
+const UserSchema = require("./models/Schema");
 const app = express_1.default();
-const port = 3000;
-app.get('/', (req, res) => {
-    console.log("Get /");
-    // console.log(__dirname); // C:\Users\Sparremberger\Desktop\GitHub\npn.li-backend\dist
-    res.sendFile('./npn.li/index.html', { root: __dirname });
-    //res.send("kek");
+const port = 3001;
+// Mudar string de acordo com a estrutura do sistema hospedeiro
+const siteDirectory = path_1.default.join(__dirname, "..", "..", "npn.li", "npn.li");
+// Serve pra ler o req.body quando vem do form html
+app.use(express_1.default.urlencoded({ extended: false }));
+// Serve para ler o req.body quando parte de um json, e mais coisas
+app.use(express_1.default.json());
+// Cookie parser não vem por padrão no express :\
+//app.use(cookieParser());
+// Conecta com o mongodb usando a url lá de cima e seta algumas propriedades
+mongoose_1.default.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+// db vai ser usado para monitorar a conexão
+const db = mongoose_1.default.connection;
+db.once("open", (_) => {
+    console.log("Database connected:", url);
 });
-app.post('/encurtar', (req, res) => {
-    console.log(req.body);
-    res.send('POST ték foi');
+db.on("error", (err) => {
+    console.error("connection error:", err);
 });
-app.use(express_1.default.static('dist/npn.li'));
+app.use("/", Routes_1.default);
+app.use(express_1.default.static(siteDirectory));
 app.listen(port, (err) => {
     if (err != null) {
         return console.log(err);

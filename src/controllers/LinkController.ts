@@ -40,10 +40,14 @@ class LinkController {
         return urlExists;
     }
 
+    async addLinkToUser() {
+        //todo
+    }
+
     async addLink(urlParam: string) {
         /* Link = 4 dígitos aleatórios ao final de npn.li/   URL = o site original, pra onde será redirecionado
          * esse método usa o uuid pra gerar uma string única e pega os 4 primeiros caracteres */
-        const newLink = await new Link({ link: uuidv4().substring(0, 4), originalUrl: urlParam, email: "0" });
+        const newLink = await new Link({ link: uuidv4().substring(0, 4), originalUrl: urlParam});
         newLink.save();
         return newLink;
 

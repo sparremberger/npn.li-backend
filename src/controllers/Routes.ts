@@ -64,20 +64,28 @@ router.get("/registro", (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "cadastro.html"));
 });
 
+router.get("/autenticar", async (req : Request, res : Response) => {
+    const userFound = await uc.AuthenticateUserByToken(req.headers.cookie);
+    if (userFound != undefined && userFound.length > 0) {
+        res.send("autenticado");
+    }
+    else {
+        res.send("nope");
+    }
+});
+
 router.get("/userlinks", async (req: Request, res: Response) => {
     const userFound = await uc.AuthenticateUserByToken(req.headers.cookie);
-    if (userFound.length > 0) {
+    if (userFound != undefined && userFound.length > 0) {
         console.log(userFound);
         console.log(userFound[0].links);
         let linkArray = [];
         for (let i = 0; i < userFound[0].links.length; i++) {
-            //            await linkArray.push(lc.getLink(userFound[0].links[i]));
-            let estringue = await lc.getLink(userFound[0].links[i]);
-            linkArray.push({ link : userFound[0].links[i], url : estringue });
+            let estringue = await lc.getLink(userFound[0].links[i], false);
+            linkArray.push({ link: userFound[0].links[i], url: estringue });
             console.log(`Link: ${userFound[0].links[i]} Url: ${linkArray[i]}`);
-            
         }
-        console.log(linkArray)
+        console.log(linkArray);
         res.json(linkArray);
     } else {
         res.send("404");
@@ -91,11 +99,28 @@ router.get("/login", async (req: Request, res: Response) => {
     res.sendFile(path.join(siteDirectory, "login.html"));
 });
 
+router.get("/minhaconta", async (req: Request, res: Response) => {
+    if (req.headers.cookie != undefined && req.headers.cookie.length > 0) {
+        let user = await uc.AuthenticateUserByToken(req.headers.cookie);
+        if (user.length > 0) {
+            res.sendFile(path.join(siteDirectory, "myacc.html"));
+        } else {
+            res.redirect("/login");
+        }
+    } else {
+        res.redirect("/login");
+    }
+});
+
 router.post("/login", async (req: Request, res: Response) => {
     const { email, password }: any = req.body;
     let result: string = await uc.loginUser(email, password);
-    res.cookie("access_token", result, options); // Seta o cookie para a session token
-    res.send(result);
+    if (result == "0" || result == "1") {
+        res.send("Endereço de e-mail ou senha inválidos");
+    } else {
+        res.cookie("access_token", result, options); // Seta o cookie para a session token
+        res.redirect("/minhaconta");
+    }
     //res.sendFile(path.join(siteDirectory, "login.html"));
 });
 
@@ -122,11 +147,10 @@ router.post("/login", (req: Request, res: Response) => {
 router.get("/:link([a-zA-Z0-9]{4})", async (req: Request, res: Response) => {
     //const currentUser = await uc.getUserByEmail("alanrspa@gmail.com");
     const destinationUrl: string = await lc.clickLink(req.params.link, true);
-    if (destinationUrl != '404') {
-    res.redirect(destinationUrl);
-    }
-    else {
-        res.send('404');
+    if (destinationUrl != "404") {
+        res.redirect(destinationUrl);
+    } else {
+        res.send("404");
     }
 
     // Se não havia nenhum link, então ele não redirecionou ninguém... logo, 404.

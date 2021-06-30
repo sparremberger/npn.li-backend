@@ -21,7 +21,7 @@ let options = {
     domain: "127.0.0.1",
     httpOnly: false,
     maxAge: 1000 * 60 * 60 * 24 * 15,
-    sameSite: false,
+    sameSite: false, // não tenho certeza
 };
 
 // INÍCIO DAS ROTAS
